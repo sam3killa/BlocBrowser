@@ -159,13 +159,25 @@
     [textField resignFirstResponder];
     
     NSString *URLString = textField.text;
-    
+    NSString *replacedSpaceURLString = [[NSString alloc]init];
     NSURL *URL = [NSURL URLWithString:URLString];
     
+    // Check if there is white space
+    NSRange whiteSpaceRange = [URLString rangeOfCharacterFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    
+    // Replace white space with the "+" sign and place it into the google search parameter
+    if (whiteSpaceRange.location != NSNotFound) {
+        replacedSpaceURLString = [URLString stringByReplacingOccurrencesOfString:@" " withString:@"+"];
+        NSLog(@"%@",replacedSpaceURLString);
+        URL = [NSURL URLWithString: [NSString stringWithFormat: @"http://www.google.com/search?q=%@", replacedSpaceURLString]];
+    }
+    
     // If the URL doesn't follow the scheme of a typical http:// url then add it.
-    if (!URL.scheme) {
+   if (!URL.scheme) {
         URL = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@", URLString]];
     }
+    
+ 
     
     // If a URL is present in the text field, then create an NSURLRequest and load the request in the web view
     if(URL) {
