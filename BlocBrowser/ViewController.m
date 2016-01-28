@@ -112,6 +112,21 @@
     
     self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.activityIndicator];
+    
+    // Welcome Message Alert
+    
+    // Create a UIAlertController that contains the content of the alert
+    UIAlertController *welcomeAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Welcome",@"Welcome") message:@"Welcome to this awesome app!" preferredStyle:UIAlertControllerStyleAlert];
+    
+    // Create a UIAlertAction to determine what action the user can take when the alert pops up
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleCancel handler:nil];
+    
+    // Add the action to the alert
+    [welcomeAlert addAction:okAction];
+    
+    // Display the alert
+    [self presentViewController:welcomeAlert animated:YES completion:nil];
+    
 }
 
 - (void) viewWillLayoutSubviews {
