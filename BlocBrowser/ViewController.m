@@ -8,17 +8,23 @@
 
 #import "ViewController.h"
 #import <WebKit/Webkit.h>
+#import "AwesomeFloatingToolbar.h"
+
+// Define keywords that will be replaced with whatever we define here
+#define kWebBrowerBackString NSLocalizedString(@"Back", @"Back command ")
+#define kWebBrowerForwardString NSLocalizedString(@"Forward", @"Forward command ")
+#define kWebBrowerStopString NSLocalizedString(@"Stop", @"Stop command ")
+#define kWebBrowerRefreshString NSLocalizedString(@"Refresh", @"Reload command ")
+
 
 // Declare that our view controller conforms to the following protocols
-@interface ViewController () <WKNavigationDelegate, UITextFieldDelegate>
+@interface ViewController () <WKNavigationDelegate, UITextFieldDelegate, AwesomeFloatingToolbarDelegate>
 
 // Private Properties
 @property (nonatomic, strong) WKWebView *webView;
 @property (nonatomic, strong) UITextField *textField;
-@property (nonatomic, strong) UIButton *backButton;
-@property (nonatomic, strong) UIButton *forwardButton;
-@property (nonatomic, strong) UIButton *stopButton;
-@property (nonatomic, strong) UIButton *reloadButton;
+@property (nonatomic, strong) AwesomeFloatingToolbar *awesomeToolbar;
+@property (nonatomic, assign) NSUInteger framecount;
 @property (nonatomic, strong) UIActivityIndicatorView *activityIndicator;
 @end
 
@@ -59,50 +65,15 @@
     
     // Adding the button views
     
-    self.backButton =[UIButton buttonWithType:UIButtonTypeSystem];
-    [self.backButton setEnabled:NO];
-    
-    self.forwardButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    [self.forwardButton setEnabled:NO];
-    
-    self.stopButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    [self.stopButton setEnabled:NO];
-    
-    self.reloadButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    [self.reloadButton setEnabled:NO];
-    
-    [self.backButton setTitle:NSLocalizedString(@"Back", @"Back command") forState:UIControlStateNormal];
-    
-    [self.forwardButton setTitle:NSLocalizedString(@"Forward", @"Forward command") forState:UIControlStateNormal];
-    
-    [self.stopButton setTitle:NSLocalizedString(@"Stop", @"Stop command") forState:UIControlStateNormal];
-    
-    [self.reloadButton setTitle:NSLocalizedString(@"Refresh", @"Refresh command") forState:UIControlStateNormal];
+    self.awesomeToolbar = [[AwesomeFloatingToolbar alloc] initWithFourTitles:@[kWebBrowerBackString, kWebBrowerForwardString, kWebBrowerRefreshString, kWebBrowerStopString]];
 
-    [self addButtonTargets];
-    
-    //    // Create a string with a website url
-    //    NSString *urlString = @"http://www.google.com";
-    //
-    //    // Create an NSURL with that string
-    //    NSURL *url = [NSURL URLWithString:urlString];
-    //
-    //    // Create an NSURLRequest with the url
-    //    NSURLRequest *request = [NSURLRequest requestWithURL:url];
-    //    [self.webView loadRequest:request];
-    
-//    [mainView addSubview:self.webView];
-//    [mainView addSubview:self.textField];
-//    [mainView addSubview:self.backButton];
-//    [mainView addSubview:self.forwardButton];
-//    [mainView addSubview:self.stopButton];
-//    [mainView addSubview:self.reloadButton];
 
-    for (UIView *viewToAdd in @[self.webView, self.textField, self.backButton, self.forwardButton, self.stopButton, self.reloadButton]) {
+    for (UIView *viewToAdd in @[self.webView, self.textField, self.awesomeToolbar]) {
         [mainView addSubview:viewToAdd];
     }
     
     self.view = mainView;
+
 }
 
 - (void)viewDidLoad {
@@ -144,23 +115,39 @@
     CGFloat width = CGRectGetWidth(self.view.bounds);
     
     // Calculate the height of the browser view to be the height of the entire main view, minus the height of the URL bar
-    CGFloat browserHeight = CGRectGetHeight(self.view.bounds) - itemHeight - itemHeight;
+    CGFloat browserHeight = CGRectGetHeight(self.view.bounds) - itemHeight;
     
-    // Determine the width of each button
-    CGFloat buttonWidth = CGRectGetWidth(self.view.bounds) / 4;
     
     // Assign the frames
     self.textField.frame = CGRectMake(0, 0, width, itemHeight);
     self.webView.frame = CGRectMake(0, CGRectGetMaxY(self.textField.frame), width, browserHeight);
     
-    CGFloat currentButtonX = 0;
+    // Creating my own toolbar in the view
+    self.awesomeToolbar.frame = CGRectMake(20, 180, 340, 100);
     
     // Set the button positions
-    for (UIButton *thisButton in @[self.backButton, self.forwardButton, self.stopButton, self.reloadButton]) {
-        
-        thisButton.frame = CGRectMake(currentButtonX, CGRectGetMaxY(self.webView.frame), buttonWidth, itemHeight);
-        currentButtonX += buttonWidth;
+//    for (UIButton *thisButton in @[self.backButton, self.forwardButton, self.stopButton, self.reloadButton]) {
+//        
+//        thisButton.frame = CGRectMake(currentButtonX, CGRectGetMaxY(self.webView.frame), buttonWidth, itemHeight);
+//        currentButtonX += buttonWidth;
+//    }
+
+}
+
+// Implementing the protocol method
+- (void)floatingToolbar:(AwesomeFloatingToolbar *)toolbar didSelectButtonWithTitle:(NSString *)title {
+    
+    // Update the titles to use our #defined properties
+    if ([title isEqual:kWebBrowerBackString]) {
+        [self.webView goBack];
+    } else if ([title isEqual:kWebBrowerForwardString]){
+        [self.webView goForward];
+    } else if ([title isEqual:kWebBrowerStopString]){
+        [self.webView stopLoading];
+    } else if ([title isEqual:kWebBrowerRefreshString]) {
+        [self.webView reload];
     }
+    
 
 }
 
@@ -255,15 +242,15 @@
         [self.activityIndicator stopAnimating];
     }
     
-    // Enable the buttons
-    self.backButton.enabled = [self.webView canGoBack];
-    self.forwardButton.enabled = [self.webView canGoForward];
-    self.stopButton.enabled = self.webView.isLoading;
-    self.reloadButton.enabled = !self.webView.isLoading && self.webView.URL;
+    // Enable the buttons if these states are true
+    [self.awesomeToolbar setEnabled:[self.webView canGoBack] forButtonWithTitle:kWebBrowerBackString];
+    [self.awesomeToolbar setEnabled:[self.webView canGoForward] forButtonWithTitle:kWebBrowerForwardString];
+    [self.awesomeToolbar setEnabled:[self.webView isLoading] forButtonWithTitle:kWebBrowerStopString];
+    [self.awesomeToolbar setEnabled:[self.webView isLoading] && self.webView.URL forButtonWithTitle:kWebBrowerRefreshString];
 }
 
 - (void) resetWebView {
-
+    
     // Removes the old web view from the view hierarchy
     [self.webView removeFromSuperview];
     
@@ -274,28 +261,10 @@
     
     self.webView = newWebView;
     
-    // Point buttons to the new web view
-    [self addButtonTargets];
-    
     // Clears the URL field
     self.textField.text = nil;
     [self updateButtonsAndTitle];
     
-}
-
-- (void) addButtonTargets {
-
-    for (UIButton *button in @[self.backButton, self.forwardButton, self.stopButton, self.reloadButton]){
-        
-        [button removeTarget:nil action:NULL forControlEvents:UIControlEventTouchUpInside];
-    
-    }
-    
-    [self.backButton addTarget:self.webView action:@selector(goBack) forControlEvents:UIControlEventTouchUpInside];
-    [self.forwardButton addTarget:self.webView action:@selector(goForward) forControlEvents:UIControlEventTouchUpInside];
-    [self.stopButton addTarget:self.webView action:@selector(stopLoading) forControlEvents:UIControlEventTouchUpInside];
-    [self.reloadButton addTarget:self.webView action:@selector(reload) forControlEvents:UIControlEventTouchUpInside];
-
 }
 
 

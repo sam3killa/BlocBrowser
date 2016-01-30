@@ -26,6 +26,7 @@
     // Set the root view controller as "ViewController"
     self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:[[ViewController alloc] init]];
     
+    // Make window be visible
     [self.window makeKeyAndVisible];
 
     return YES;
@@ -35,7 +36,7 @@
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
 
-    UINavigationController *navigationVC = (UINavigationController *)self.window.rootViewController;
+    UINavigationController *navigationVC = (UINavigationController *) self.window.rootViewController;
     ViewController *browserVC = [[navigationVC viewControllers] firstObject];
     [browserVC resetWebView];
 
