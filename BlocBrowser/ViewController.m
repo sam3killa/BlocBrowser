@@ -4,7 +4,6 @@
 //
 //  Created by Samuel Shih on 1/25/16.
 //  Copyright © 2016 Samuel Shih. All rights reserved.
-//
 
 #import "ViewController.h"
 #import <WebKit/Webkit.h>
@@ -15,7 +14,6 @@
 #define kWebBrowerForwardString NSLocalizedString(@"Forward", @"Forward command ")
 #define kWebBrowerStopString NSLocalizedString(@"Stop", @"Stop command ")
 #define kWebBrowerRefreshString NSLocalizedString(@"Refresh", @"Reload command ")
-
 
 // Declare that our view controller conforms to the following protocols
 @interface ViewController () <WKNavigationDelegate, UITextFieldDelegate, AwesomeFloatingToolbarDelegate>
@@ -151,6 +149,22 @@
 
 }
 
+// Implement the pan method
+- (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didTryToPanWithOffset:(CGPoint)offset {
+    
+    // Top-left corner of where the toolbar is located
+    CGPoint startingPoint = toolbar.frame.origin;
+    
+    // Where the future top-left corner
+    CGPoint newPoint = CGPointMake(startingPoint.x + offset.x, startingPoint.y + offset.y);
+    
+    CGRect potentialNewFrame = CGRectMake(newPoint.x, newPoint.y, CGRectGetWidth(toolbar.frame), CGRectGetHeight(toolbar.frame));
+    
+    if (CGRectContainsRect(self.view.bounds, potentialNewFrame)) {
+        toolbar.frame = potentialNewFrame;
+    }
+}
+
 #pragma mark - UITextFieldDelegate
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField {
@@ -266,6 +280,5 @@
     [self updateButtonsAndTitle];
     
 }
-
 
 @end

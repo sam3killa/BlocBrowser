@@ -19,6 +19,7 @@
 
 // If the delegate implements it, it will be called when a user taps a button.
 - (void) floatingToolbar: (AwesomeFloatingToolbar *) toolbar didSelectButtonWithTitle:(NSString *)title;
+- (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didTryToPanWithOffset:(CGPoint)offset;
 
 @end
 
