@@ -64,6 +64,7 @@
     // Adding the button views
     
     self.awesomeToolbar = [[AwesomeFloatingToolbar alloc] initWithFourTitles:@[kWebBrowerBackString, kWebBrowerForwardString, kWebBrowerRefreshString, kWebBrowerStopString]];
+    self.awesomeToolbar.delegate = self;
 
 
     for (UIView *viewToAdd in @[self.webView, self.textField, self.awesomeToolbar]) {
