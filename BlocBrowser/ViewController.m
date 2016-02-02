@@ -166,6 +166,23 @@
     }
 }
 
+- (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didPinchToolbar:(CGFloat)scale {
+    
+    // Need help on this method
+    NSLog(@"Triggered PINCH METHOD");
+    CGAffineTransform scaleTransform = CGAffineTransformScale(CGAffineTransformIdentity, scale, scale);
+    toolbar.bounds = CGRectApplyAffineTransform(toolbar.bounds, scaleTransform);
+    
+    
+}
+
+- (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didLongPress:(CFTimeInterval)minimumPressDuration {
+    
+    NSLog(@"Triggered LONG PRESS METHOD");
+    
+    
+}
+
 #pragma mark - UITextFieldDelegate
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField {

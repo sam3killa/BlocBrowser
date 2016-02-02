@@ -21,6 +21,8 @@
 // Tap Gesture Recognizer
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
+@property (nonatomic, strong) UIPinchGestureRecognizer *pinchGesture;
+@property (nonatomic, strong) UILongPressGestureRecognizer *longPressGesture;
 
 @end
 
@@ -75,6 +77,8 @@
             [self addSubview:thisLabel];
         }
         
+        // Adding the Gesture Recognizers to the view controller
+        
         // Initialize the tap gesture to call the tapFired method
         self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapFired:)];
         // Add the gesture recognizer tap gesture
@@ -83,6 +87,14 @@
         // Pan Gesture recognizer
         self.panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panFired:)];
         [self addGestureRecognizer:self.panGesture];
+        
+        // Pinch Gesture recognizer
+        self.pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchFired:)];
+        [self addGestureRecognizer:self.pinchGesture];
+        
+        // Long Press Gesture recognizer
+        self.longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressFired:)];
+        [self addGestureRecognizer:self.longPressGesture];
     }
     
     return self;
@@ -120,6 +132,7 @@
     // Recognize that the state has changed
     if (recognizer.state == UIGestureRecognizerStateChanged) {
         
+
         // How far the finger has moved in each direction since the event began
         CGPoint translation = [recognizer translationInView:self];
         
@@ -133,6 +146,44 @@
     }
 }
 
+// Pinch Fired Method
+
+- (void) pinchFired:(UIPinchGestureRecognizer *) recognizer {
+
+    if (recognizer.state == UIGestureRecognizerStateBegan) {
+        
+        CGFloat scale = [recognizer scale];
+        NSLog(@"%f",scale);
+        
+        if ([self.delegate respondsToSelector:@selector(floatingToolbar:didPinchToolbar:)]){
+
+            [self.delegate floatingToolbar:self didPinchToolbar: scale];
+              
+        }
+        
+    }
+}
+
+// Long Press Method
+
+- (void) longPressFired:(UILongPressGestureRecognizer *) recognizer {
+
+    if (recognizer.state == UIGestureRecognizerStateRecognized) {
+        
+        NSLog(@"Long Press Registered");
+        
+        CFTimeInterval timeInterval = [recognizer minimumPressDuration];
+        
+        if([self.delegate respondsToSelector:@selector(floatingToolbar:didLongPress:)]) {
+            
+            // You want to rotate the colors in the array.
+            [self.delegate floatingToolbar:self didLongPress:timeInterval];
+
+        }
+        
+    }
+
+}
 
 // Layout Subviews will be called any time a view's frame is changed
 - (void)layoutSubviews {
@@ -150,7 +201,7 @@
         // Adjust labelX and labelY for each label depending on which label is on the top or bottom
         
         // Set the Y for the labels
-        if (currentLabelIndex <2) {
+        if (currentLabelIndex < 2) {
             // 0 or 1, so on top
             labelY = 0;
         } else {
@@ -166,7 +217,6 @@
             // 1 or 3, so on the right
             labelX = CGRectGetWidth(self.bounds) / 2;
         }
-
     
         thisLabel.frame = CGRectMake(labelX, labelY, labelWidth, labelHeight);
     }
