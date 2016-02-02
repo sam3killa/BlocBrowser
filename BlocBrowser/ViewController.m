@@ -97,6 +97,9 @@
     // Display the alert
     [self presentViewController:welcomeAlert animated:YES completion:nil];
     
+    // Creating my own toolbar in the view
+    self.awesomeToolbar.frame = CGRectMake(20, 180, 340, 100);
+    
 }
 
 - (void) viewWillLayoutSubviews {
@@ -121,8 +124,6 @@
     self.textField.frame = CGRectMake(0, 0, width, itemHeight);
     self.webView.frame = CGRectMake(0, CGRectGetMaxY(self.textField.frame), width, browserHeight);
     
-    // Creating my own toolbar in the view
-    self.awesomeToolbar.frame = CGRectMake(20, 180, 340, 100);
     
     // Set the button positions
 //    for (UIButton *thisButton in @[self.backButton, self.forwardButton, self.stopButton, self.reloadButton]) {
@@ -168,17 +169,32 @@
 
 - (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didPinchToolbar:(CGFloat)scale {
     
-    // Need help on this method
-    NSLog(@"Triggered PINCH METHOD");
-    CGAffineTransform scaleTransform = CGAffineTransformScale(CGAffineTransformIdentity, scale, scale);
-    toolbar.bounds = CGRectApplyAffineTransform(toolbar.bounds, scaleTransform);
+//    CGAffineTransform scaleTransform = CGAffineTransformScale(CGAffineTransformIdentity, scale, scale);
+//    toolbar.bounds = CGRectApplyAffineTransform(toolbar.bounds, scaleTransform);
+    
+    CGPoint startingPoint = toolbar.frame.origin;
+    
+    CGRect potentialNewFrame = CGRectMake(startingPoint.x, startingPoint.y, CGRectGetWidth(toolbar.frame) * scale, CGRectGetHeight(toolbar.frame) * scale);
+    
+    if (CGRectContainsRect(self.view.bounds, potentialNewFrame)) {
+        toolbar.frame = potentialNewFrame;
+    }
     
     
 }
 
 - (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didLongPress:(CFTimeInterval)minimumPressDuration {
     
-    NSLog(@"Triggered LONG PRESS METHOD");
+    NSLog(@"Labels: %@",toolbar.labels);
+    
+    for (UILabel *label in toolbar.labels) {
+        
+        NSUInteger currentLabelIndex = [toolbar.labels indexOfObject:label];
+        label.backgroundColor = toolbar.colors[currentLabelIndex];
+        
+        NSLog(@"%lu",(unsigned long)currentLabelIndex);
+
+    }
     
     
 }

@@ -31,6 +31,10 @@
 // A custom initializer to use, which takes an array of four titles as an argument
 - (instancetype) initWithFourTitles:(NSArray *)titles;
 
+@property (nonatomic, strong) NSArray *labels;
+@property (nonatomic, strong) NSArray *colors;
+
+
 // A method that set's whether a button is enabled based on the title
 - (void) setEnabled:(BOOL)enabled forButtonWithTitle:(NSString *)title;
 

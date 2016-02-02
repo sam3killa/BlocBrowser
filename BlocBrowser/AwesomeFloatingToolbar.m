@@ -12,8 +12,6 @@
 
 // Creating properties to store the labels, colors, and titles
 @property (nonatomic, strong) NSArray *currentTitles;
-@property (nonatomic, strong) NSArray *colors;
-@property (nonatomic, strong) NSArray *labels;
 
 // Property to keep track of which label the user is currently touching
 @property (nonatomic, weak) UILabel *currentLabel;
@@ -175,7 +173,8 @@
         CFTimeInterval timeInterval = [recognizer minimumPressDuration];
         
         if([self.delegate respondsToSelector:@selector(floatingToolbar:didLongPress:)]) {
-            
+            self.colors = @[self.colors[1], self.colors[2], self.colors[3], self.colors[0]];
+            NSLog(@"%@",self.colors);
             // You want to rotate the colors in the array.
             [self.delegate floatingToolbar:self didLongPress:timeInterval];
 
