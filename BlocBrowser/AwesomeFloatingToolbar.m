@@ -14,7 +14,7 @@
 @property (nonatomic, strong) NSArray *currentTitles;
 
 // Property to keep track of which label the user is currently touching
-@property (nonatomic, weak) UILabel *currentLabel;
+@property (nonatomic, weak) UIButton *currentButton;
 
 // Tap Gesture Recognizer
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
@@ -40,47 +40,49 @@
                         [UIColor colorWithRed:222/255.0 green:165/255.0 blue:164/255.0 alpha:1],
                         [UIColor colorWithRed:255/255.0 green:179/255.0 blue:71/255.0 alpha:1]];
 
-        NSMutableArray *labelsArray = [[NSMutableArray alloc] init];
+        NSMutableArray *buttonsArray = [[NSMutableArray alloc] init];
         
         // Make the 4 labels
         for (NSString *currentTitle in self.currentTitles) {
             
             // Create a new label
-            UILabel *label = [[UILabel alloc] init];
-            label.userInteractionEnabled = NO;
-            label.alpha = 0.25;
+            UIButton *button = [[UIButton alloc] init];
+            button.userInteractionEnabled = NO;
+            button.alpha = 0.25;
             
             // Set up properties of the label
             NSUInteger currentTitleIndex = [self.currentTitles indexOfObject:currentTitle]; //Index 0-3
-            NSString *titleForThisLabel = [self.currentTitles objectAtIndex:currentTitleIndex];
-            UIColor *colorForThisLabel = [self.colors objectAtIndex:currentTitleIndex];
+            NSString *titleForThisButton = [self.currentTitles objectAtIndex:currentTitleIndex];
+            UIColor *colorForThisButton = [self.colors objectAtIndex:currentTitleIndex];
             
             // Program the labels
-            label.textAlignment = NSTextAlignmentCenter;
-            label.font = [UIFont systemFontOfSize:10];
-            label.text = titleForThisLabel;
-            label.backgroundColor = colorForThisLabel;
-            label.textColor = [UIColor whiteColor];
+            button.font = [UIFont systemFontOfSize:10];
+            [button setTitle:titleForThisButton forState:UIControlStateNormal];
+            [button setBackgroundColor:colorForThisButton];
+            [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
             
-            // Add the label to the labelsArray
-            [labelsArray addObject:label];
+            [button addTarget:self action:@selector(tapFired:) forControlEvents:UIControlEventTouchUpInside];
+            
+            // Add the button to the buttonsArray
+            [buttonsArray addObject:button];
         
         }
         
         // Add the labelsArray to the labels property
-        self.labels = labelsArray;
+        self.buttons = buttonsArray;
         
         // Add the labels to the view
-        for (UILabel *thisLabel in self.labels){
-            [self addSubview:thisLabel];
+        for (UIButton *thisButton in self.buttons){
+            [self addSubview:thisButton];
         }
         
         // Adding the Gesture Recognizers to the view controller
         
-        // Initialize the tap gesture to call the tapFired method
-        self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapFired:)];
-        // Add the gesture recognizer tap gesture
-        [self addGestureRecognizer:self.tapGesture];
+//        // Initialize the tap gesture to call the tapFired method
+//        self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapFired:)];
+//        // Add the gesture recognizer tap gesture
+//        [self addGestureRecognizer:self.tapGesture];
+        
         
         // Pan Gesture recognizer
         self.panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panFired:)];
@@ -101,26 +103,16 @@
 
 // Tap Fired Method
 
-- (void) tapFired:(UIGestureRecognizer *) recognizer {
+- (void) tapFired:(UIButton *) button {
     
-    // Check for the proper state
-    if (recognizer.state == UIGestureRecognizerStateRecognized) {
-        
-        // Calculates and stores where the touch was located. An x y coordinate
-        CGPoint location = [recognizer locationInView:self];
-        
-        // Finds out which view received the tap
-        UIView *tappedView = [self hitTest:location withEvent:nil];
-        
-        // Check to see if the view that was tapped was one of our toolbar labels
-        if ([self.labels containsObject:tappedView]) { // #6
+    NSLog(@"Button Fired");
+    
             if ([self.delegate respondsToSelector:@selector(floatingToolbar:didSelectButtonWithTitle:)]) {
-                [self.delegate floatingToolbar:self didSelectButtonWithTitle:((UILabel *)tappedView).text];
                 
-                NSLog(@"Tapped Label");
+                [self.delegate floatingToolbar:self didSelectButtonWithTitle:[button currentTitle]];
+                
             }
-        }
-    }
+    
 }
 
 // Pan Fired Method
@@ -187,9 +179,9 @@
 // Layout Subviews will be called any time a view's frame is changed
 - (void)layoutSubviews {
     
-    for (UILabel *thisLabel in self.labels){
+    for (UILabel *thisLabel in self.buttons){
         // Keep current index of the label
-        NSUInteger currentLabelIndex = [self.labels indexOfObject:thisLabel];
+        NSUInteger currentLabelIndex = [self.buttons indexOfObject:thisLabel];
         
         // Determine the label dimension floats
         CGFloat labelHeight = CGRectGetHeight(self.bounds) / 2;
@@ -249,9 +241,9 @@
     
     if (index != NSNotFound) {
     
-        UILabel *label = [self.labels objectAtIndex:index];
-        label.userInteractionEnabled = enabled;
-        label.alpha = enabled ? 1.0 : 0.25;
+        UIButton *button = [self.buttons objectAtIndex:index];
+        button.userInteractionEnabled = enabled;
+        button.alpha = enabled ? 1.0 : 0.25;
     }
     
 }

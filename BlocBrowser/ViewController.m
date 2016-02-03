@@ -75,6 +75,7 @@
 
 }
 
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -137,6 +138,7 @@
 // Implementing the protocol method
 - (void)floatingToolbar:(AwesomeFloatingToolbar *)toolbar didSelectButtonWithTitle:(NSString *)title {
     
+    NSLog(@"%@",title);
     // Update the titles to use our #defined properties
     if ([title isEqual:kWebBrowerBackString]) {
         [self.webView goBack];
@@ -185,12 +187,12 @@
 
 - (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didLongPress:(CFTimeInterval)minimumPressDuration {
     
-    NSLog(@"Labels: %@",toolbar.labels);
+    NSLog(@"Labels: %@",toolbar.buttons);
     
-    for (UILabel *label in toolbar.labels) {
+    for (UILabel *button in toolbar.buttons) {
         
-        NSUInteger currentLabelIndex = [toolbar.labels indexOfObject:label];
-        label.backgroundColor = toolbar.colors[currentLabelIndex];
+        NSUInteger currentLabelIndex = [toolbar.buttons indexOfObject:button];
+        button.backgroundColor = toolbar.colors[currentLabelIndex];
         
         NSLog(@"%lu",(unsigned long)currentLabelIndex);
 

@@ -31,7 +31,7 @@
 // A custom initializer to use, which takes an array of four titles as an argument
 - (instancetype) initWithFourTitles:(NSArray *)titles;
 
-@property (nonatomic, strong) NSArray *labels;
+@property (nonatomic, strong) NSArray *buttons;
 @property (nonatomic, strong) NSArray *colors;
 
 

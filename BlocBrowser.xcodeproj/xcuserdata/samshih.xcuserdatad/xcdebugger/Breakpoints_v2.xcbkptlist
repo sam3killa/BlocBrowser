@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BlocBrowser/ViewController.m"
-            timestampString = "476130495.145252"
+            timestampString = "476225399.142493"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "156"
-            endingLineNumber = "156"
+            startingLineNumber = "157"
+            endingLineNumber = "157"
             landmarkName = "-floatingToolbar:didTryToPanWithOffset:"
             landmarkType = "5">
          </BreakpointContent>
@@ -73,13 +73,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BlocBrowser/AwesomeFloatingToolbar.m"
-            timestampString = "476131842.566361"
+            filePath = "BlocBrowser/ViewController.m"
+            timestampString = "476225407.671996"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "168"
-            endingLineNumber = "168"
-            landmarkName = "-longPressFired:"
+            startingLineNumber = "140"
+            endingLineNumber = "140"
+            landmarkName = "-floatingToolbar:didSelectButtonWithTitle:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
